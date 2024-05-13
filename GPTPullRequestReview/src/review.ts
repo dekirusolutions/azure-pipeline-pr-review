@@ -61,6 +61,7 @@ export async function reviewFile(
         headers,
         body: JSON.stringify({
           max_tokens: 500,
+          model: tl.getInput("model") || defaultOpenAIModel,
           messages: [
             {
               role: "user",

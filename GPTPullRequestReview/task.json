@@ -54,6 +54,14 @@
       "defaultValue": "false",
       "required": false,
       "helpMarkDown": "Select this option to support self-signed certificate."
+    },
+    {
+      "name": "instructions",
+      "type": "multiLine",
+      "label": "Message",
+      "required": false,
+      "helpMarkDown": "The message to send to the AI model.",
+      "defaultValue": "Act as a code reviewer of a Pull Request, providing feedback on possible bugs and clean code issues.\nYou are provided with the Pull Request changes in a patch format.\nEach patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.\n\nAs a code reviewer, your task is:\n - Review only added, edited or deleted lines.\n - If there's no bugs and the changes are correct, write only 'No feedback.'\n - If there's bug or uncorrect code changes, don't write 'No feedback.'"
     }
   ],
   "execution": {
