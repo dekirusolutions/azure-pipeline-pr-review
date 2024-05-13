@@ -1,55 +1,43 @@
 {
-    "manifestVersion": 1,
-    "id": "GPTPullRequestReview",
-    "name": "GPT Pull Request Review",
-    "version": "0.12.3",
-    "publisher": "mustaphalarhrouch",
-    "galleryFlags": [
-        "Public",
-        "Preview"
-    ],
-    "targets": [
-        {
-            "id": "Microsoft.VisualStudio.Services"
-        }
-    ],    
-    "description": "A task that review Pull Request using GPT model from OpenAI",
-    "categories": [
-        "Azure Pipelines"
-    ],
-    "icons": {
-        "default": "images/icon.png"        
-    },
-    "tags": [
-        "OpenAI",
-        "GPT",
-        "pullRequest",
-        "review"
-    ],
-    "files": [
-        {
-            "path": "GPTPullRequestReview"
-        }
-    ],
-    "repository" : {
-        "type" : "git",
-        "uri" : "https://github.com/mlarhrouch/azure-pipeline-gpt-pr-review"
-    },
-    "content": {
-        "details": {
-            "path": "overview.md"
-        }
-    },
-    "contributions": [
-        {
-            "id": "GPTPullRequestReview",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "GPTPullRequestReview"
-            }
-        }
-    ]
+  "manifestVersion": 1,
+  "id": "AIPullRequestReview",
+  "name": "OpenAI Pull Request Review (Fork)",
+  "version": "0.0.2",
+  "publisher": "DekiruSolutionsAB",
+  "galleryFlags": ["Public", "Preview"],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "description": "A task that review Pull Request using OpenAI-compatible API",
+  "categories": ["Azure Pipelines"],
+  "icons": {
+    "default": "images/icon.png"
+  },
+  "tags": ["OpenAI", "GPT", "pullRequest", "review"],
+  "files": [
+    {
+      "path": "GPTPullRequestReview"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/johnstrand/azure-pipeline-gpt-pr-review"
+  },
+  "content": {
+    "details": {
+      "path": "overview.md"
+    }
+  },
+  "contributions": [
+    {
+      "id": "GPTPullRequestReviewv0",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "GPTPullRequestReview"
+      }
+    }
+  ]
 }

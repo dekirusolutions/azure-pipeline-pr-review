@@ -1,15 +1,22 @@
-import fetch from 'node-fetch';
-import { git } from './git';
-import { OpenAIApi } from 'openai';
-import { addCommentToPR } from './pr';
-import { Agent } from 'https';
+import fetch from "node-fetch";
+import { git } from "./git";
+import { OpenAIApi } from "openai";
+import { addCommentToPR } from "./pr";
+import { Agent } from "https";
 import * as tl from "azure-pipelines-task-lib/task";
 
-export async function reviewFile(targetBranch: string, fileName: string, httpsAgent: Agent, apiKey: string, openai: OpenAIApi | undefined, aoiEndpoint: string | undefined) {
+export async function reviewFile(
+  targetBranch: string,
+  fileName: string,
+  httpsAgent: Agent,
+  apiKey: string | undefined,
+  openai: OpenAIApi | undefined,
+  aoiEndpoint: string | undefined
+) {
   console.log(`Start reviewing ${fileName} ...`);
 
-  const defaultOpenAIModel = 'gpt-3.5-turbo';
-  const patch = await git.diff([targetBranch, '--', fileName]);
+  const defaultOpenAIModel = "gpt-3.5-turbo";
+  const patch = await git.diff([targetBranch, "--", fileName]);
 
   const instructions = `Act as a code reviewer of a Pull Request, providing feedback on possible bugs and clean code issues.
         You are provided with the Pull Request changes in a patch format.
@@ -25,33 +32,42 @@ export async function reviewFile(targetBranch: string, fileName: string, httpsAg
 
     if (openai) {
       const response = await openai.createChatCompletion({
-        model: tl.getInput('model') || defaultOpenAIModel,
+        model: tl.getInput("model") || defaultOpenAIModel,
         messages: [
           {
             role: "system",
-            content: instructions
+            content: instructions,
           },
           {
             role: "user",
-            content: patch
-          }
+            content: patch,
+          },
         ],
-        max_tokens: 500
+        max_tokens: 500,
       });
 
-      choices = response.data.choices
-    }
-    else if (aoiEndpoint) {
+      choices = response.data.choices;
+    } else if (aoiEndpoint) {
+      const headers = {
+        "Content-Type": "application/json",
+      } as { [key: string]: string };
+
+      if (apiKey) {
+        headers["api-key"] = apiKey;
+      }
+
       const request = await fetch(aoiEndpoint, {
-        method: 'POST',
-        headers: { 'api-key': `${apiKey}`, 'Content-Type': 'application/json' },
+        method: "POST",
+        headers,
         body: JSON.stringify({
           max_tokens: 500,
-          messages: [{
-            role: "user",
-            content: `${instructions}\n, patch : ${patch}}`
-          }]
-        })
+          messages: [
+            {
+              role: "user",
+              content: `${instructions}\n, patch : ${patch}}`,
+            },
+          ],
+        }),
       });
 
       const response = await request.json();
@@ -68,8 +84,7 @@ export async function reviewFile(targetBranch: string, fileName: string, httpsAg
     }
 
     console.log(`Review of ${fileName} completed.`);
-  }
-  catch (error: any) {
+  } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
       console.log(error.response.data);
