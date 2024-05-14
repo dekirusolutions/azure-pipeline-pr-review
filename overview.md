@@ -2,33 +2,35 @@
 
 The GPT Pull Request Review Task for Azure Pipelines is designed to use the GPT model from OpenAI to review Pull Requests and provide feedback as comments in the Pull Request.
 
+This is a fork of https://github.com/mlarhrouch/azure-pipeline-gpt-pr-review. I'm doing some changes to make the extension more flexible, but there's more work to be done.
+
 ## Setup
 
 Before using this task, ensure that the build service has permissions to contribute to Pull Requests in your repository, and allow the task to access the system token.
 
 ### Give permission to the build service agent
 
-![contribute_to_pr](https://github.com/mlarhrouch/azure-pipeline-gpt-pr-review/blob/main/images/contribute_to_pr.png?raw=true)
+![contribute_to_pr](https://github.com/johnstrand/azure-pipeline-gpt-pr-review/blob/main/images/contribute_to_pr.png?raw=true)
 
 ### Allow Task to access the system token
 
 Depending on the type of pipeline you are using, follow one of the two steps below:
 
-#### Yaml pipelines 
+#### Yaml pipelines
 
 Add a checkout section with persistCredentials set to true.
 
 ```yaml
 steps:
-- checkout: self
-  persistCredentials: true
+  - checkout: self
+    persistCredentials: true
 ```
 
-#### Classic editors 
+#### Classic editors
 
 Enable the option "Allow scripts to access the OAuth token" in the "Agent job" properties.
 
-![allow_access_token](https://github.com/mlarhrouch/azure-pipeline-gpt-pr-review/blob/main/images/allow_access_token.png?raw=true)
+![allow_access_token](https://github.com/johnstrand/azure-pipeline-gpt-pr-review/blob/main/images/allow_access_token.png?raw=true)
 
 ### Azure Open AI service
 
@@ -59,4 +61,3 @@ When the build is triggered from a Pull Request, the task will review it. If the
 ## Compatible with Linux Build Agents
 
 The tasks can execute on all supported build agent operating systems **including Linux and MacOS**.
-

@@ -2,15 +2,15 @@
   "manifestVersion": 1,
   "id": "AIPullRequestReview",
   "name": "OpenAI Pull Request Review (Fork)",
-  "version": "0.0.2",
+  "version": "0.0.13",
   "publisher": "DekiruSolutionsAB",
-  "galleryFlags": ["Public", "Preview"],
+  "galleryFlags": ["Preview", "Public"],
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
-  "description": "A task that review Pull Request using OpenAI-compatible API",
+  "description": "A task for reviewing Pull Requests using OpenAI-compatible API",
   "categories": ["Azure Pipelines"],
   "icons": {
     "default": "images/icon.png"

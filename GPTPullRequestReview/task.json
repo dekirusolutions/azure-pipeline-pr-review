@@ -11,7 +11,7 @@
   "version": {
     "Major": "0",
     "Minor": "12",
-    "Patch": "3"
+    "Patch": "9"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "AIPullRequestReview $(message)",
@@ -65,7 +65,7 @@
     }
   ],
   "execution": {
-    "Node10": {
+    "Node16": {
       "target": "dist/index.js"
     }
   }

@@ -50,6 +50,15 @@ async function run() {
 
     const filesNames = await getChangedFiles(targetBranch);
 
+    if (filesNames.length === 0) {
+      tl.setResult(tl.TaskResult.Skipped, "No files to review.");
+      return;
+    }
+
+    for (const fileName of filesNames) {
+      console.log(`File changed: ${fileName}`);
+    }
+
     await deleteExistingComments(httpsAgent);
 
     for (const fileName of filesNames) {
@@ -63,9 +72,11 @@ async function run() {
       );
     }
 
-    tl.setResult(tl.TaskResult.Succeeded, "Pull Request reviewed.");
+    console.log("Pull Request reviewed.");
+    tl.setResult(tl.TaskResult.Succeeded, "Pull Request reviewed.", true);
   } catch (err: any) {
-    tl.setResult(tl.TaskResult.Failed, err.message);
+    console.error(err.message);
+    tl.setResult(tl.TaskResult.Failed, err.message, true);
   }
 }
 

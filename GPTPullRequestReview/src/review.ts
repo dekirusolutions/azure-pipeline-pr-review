@@ -18,7 +18,9 @@ export async function reviewFile(
   const defaultOpenAIModel = "gpt-3.5-turbo";
   const patch = await git.diff([targetBranch, "--", fileName]);
 
-  const instructions = `Act as a code reviewer of a Pull Request, providing feedback on possible bugs and clean code issues.
+  const instructions =
+    tl.getInput("instructions") ||
+    `Act as a code reviewer of a Pull Request, providing feedback on possible bugs and clean code issues.
         You are provided with the Pull Request changes in a patch format.
         Each patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.
 
@@ -56,16 +58,30 @@ export async function reviewFile(
         headers["api-key"] = apiKey;
       }
 
+      const ten_minutes = 10 * 60 * 1000;
+
+      const controller = new AbortController();
+
+      setTimeout(() => {
+        controller.abort();
+      }, ten_minutes);
+
       const request = await fetch(aoiEndpoint, {
         method: "POST",
         headers,
+        signal: controller.signal,
         body: JSON.stringify({
           max_tokens: 500,
+          stream: false,
           model: tl.getInput("model") || defaultOpenAIModel,
           messages: [
             {
+              role: "system",
+              content: instructions,
+            },
+            {
               role: "user",
-              content: `${instructions}\n, patch : ${patch}}`,
+              content: patch,
             },
           ],
         }),
@@ -80,7 +96,10 @@ export async function reviewFile(
       const review = choices[0].message?.content as string;
 
       if (review.trim() !== "No feedback.") {
+        console.log(`Feedback for ${fileName}: ${review}`);
         await addCommentToPR(fileName, review, httpsAgent);
+      } else {
+        console.log(`No feedback for ${fileName}.`);
       }
     }
 
