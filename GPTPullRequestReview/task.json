@@ -6,9 +6,7 @@
   "author": "John Strand",
   "helpMarkDown": "[More Information](https://github.com/johnstrand/azure-pipeline-gpt-pr-review)",
   "category": "Utility",
-  "visibility": [
-    "Build"
-  ],
+  "visibility": ["Build"],
   "demands": [],
   "version": {
     "Major": "0",
@@ -63,7 +61,7 @@
       "label": "Message",
       "required": false,
       "helpMarkDown": "The message to send to the AI model.",
-      "defaultValue": "Act as a code reviewer of a Pull Request, providing feedback on possible bugs and clean code issues.\nYou are provided with the Pull Request changes in a patch format.\nEach patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.\n\nAs a code reviewer, your task is:\n - Review only added, edited or deleted lines.\n - If there's no bugs and the changes are correct, write only 'No feedback.'\n - If there's bug or uncorrect code changes, don't write 'No feedback.'"
+      "defaultValue": "Act as a code reviewer of a Pull Request, providing feedback on possible bugs and other code issues.\nYou are provided with the Pull Request changes in a patch format.\nEach patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.\n\nAs a code reviewer, your task is:\n- Review only added, edited or deleted lines.\n- If there are no bugs and the changes are correct, write only 'No feedback.'\n- If there are bugs or incorrect code changes, don't write 'No feedback.'"
     }
   ],
   "execution": {
