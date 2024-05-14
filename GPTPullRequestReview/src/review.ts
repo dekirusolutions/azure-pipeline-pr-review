@@ -20,14 +20,14 @@ export async function reviewFile(
 
   const instructions =
     tl.getInput("instructions") ||
-    `Act as a code reviewer of a Pull Request, providing feedback on possible bugs and clean code issues.
-        You are provided with the Pull Request changes in a patch format.
-        Each patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.
+    `Act as a code reviewer of a Pull Request, providing feedback on possible bugs and other code issues.
+You are provided with the Pull Request changes in a patch format.
+Each patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.
 
-        As a code reviewer, your task is:
-                - Review only added, edited or deleted lines.
-                - If there's no bugs and the changes are correct, write only 'No feedback.'
-                - If there's bug or uncorrect code changes, don't write 'No feedback.'`;
+As a code reviewer, your task is:
+- Review only added, edited or deleted lines.
+- If there are no bugs and the changes are correct, write only 'No feedback.'
+- If there are bugs or incorrect code changes, don't write 'No feedback.'`;
 
   try {
     let review: string = "";
