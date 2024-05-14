@@ -6,12 +6,14 @@
   "author": "John Strand",
   "helpMarkDown": "[More Information](https://github.com/johnstrand/azure-pipeline-gpt-pr-review)",
   "category": "Utility",
-  "visibility": ["Build"],
+  "visibility": [
+    "Build"
+  ],
   "demands": [],
   "version": {
     "Major": "0",
     "Minor": "12",
-    "Patch": "9"
+    "Patch": 13
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "AIPullRequestReview $(message)",

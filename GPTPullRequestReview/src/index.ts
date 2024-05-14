@@ -55,10 +55,6 @@ async function run() {
       return;
     }
 
-    for (const fileName of filesNames) {
-      console.log(`File changed: ${fileName}`);
-    }
-
     await deleteExistingComments(httpsAgent);
 
     for (const fileName of filesNames) {

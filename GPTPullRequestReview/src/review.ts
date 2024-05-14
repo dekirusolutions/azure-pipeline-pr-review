@@ -30,7 +30,7 @@ export async function reviewFile(
                 - If there's bug or uncorrect code changes, don't write 'No feedback.'`;
 
   try {
-    let choices: any;
+    let review: string = "";
 
     if (openai) {
       const response = await openai.createChatCompletion({
@@ -48,7 +48,7 @@ export async function reviewFile(
         max_tokens: 500,
       });
 
-      choices = response.data.choices;
+      review = response.data.choices[0]?.message?.content ?? "No feedback.";
     } else if (aoiEndpoint) {
       const headers = {
         "Content-Type": "application/json",
@@ -66,35 +66,43 @@ export async function reviewFile(
         controller.abort();
       }, ten_minutes);
 
+      const payload = {
+        max_tokens: 500,
+        stream: false,
+        model: tl.getInput("model") || defaultOpenAIModel,
+        messages: [
+          {
+            role: "system",
+            content: instructions,
+          },
+          {
+            role: "user",
+            content: patch,
+          },
+        ],
+      };
+
+      console.log(`Sending request to ${aoiEndpoint}`, payload);
+
       const request = await fetch(aoiEndpoint, {
         method: "POST",
         headers,
         signal: controller.signal,
-        body: JSON.stringify({
-          max_tokens: 500,
-          stream: false,
-          model: tl.getInput("model") || defaultOpenAIModel,
-          messages: [
-            {
-              role: "system",
-              content: instructions,
-            },
-            {
-              role: "user",
-              content: patch,
-            },
-          ],
-        }),
+        body: JSON.stringify(payload),
       });
 
-      const response = await request.json();
+      const rawResponse = await request.text();
+      console.log(`Request status: ${request.status}`);
+      console.log("Raw response: ", rawResponse);
 
-      choices = response.choices;
+      const response = JSON.parse(rawResponse);
+
+      console.log(response);
+
+      review = response.message.content;
     }
 
-    if (choices && choices.length > 0) {
-      const review = choices[0].message?.content as string;
-
+    if (review) {
       if (review.trim() !== "No feedback.") {
         console.log(`Feedback for ${fileName}: ${review}`);
         await addCommentToPR(fileName, review, httpsAgent);
@@ -108,8 +116,10 @@ export async function reviewFile(
     if (error.response) {
       console.log(error.response.status);
       console.log(error.response.data);
+      tl.setResult(tl.TaskResult.Failed, error.response.data);
     } else {
       console.log(error.message);
+      tl.setResult(tl.TaskResult.Failed, error.message);
     }
   }
 }
