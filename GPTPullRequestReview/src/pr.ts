@@ -3,6 +3,8 @@ import { Agent } from "https";
 import fetch from "node-fetch";
 import log from "./log";
 
+const apiVersion = tl.getInputRequired("ado_api_version");
+
 export async function addCommentToPR(
   fileName: string,
   comment: string,
@@ -30,7 +32,7 @@ export async function addCommentToPR(
     "Build.Repository.Name"
   )}/pullRequests/${tl.getVariable(
     "System.PullRequest.PullRequestId"
-  )}/threads?api-version=5.1`;
+  )}/threads?api-version=${apiVersion}`;
 
   const response = await fetch(prUrl, {
     method: "POST",
@@ -49,7 +51,7 @@ export async function addCommentToPR(
 }
 
 export async function deleteExistingComments(httpsAgent: Agent) {
-  console.log("Start deleting existing comments added by the previous Job ...");
+  log.info("Start deleting existing comments added by the previous Job ...");
 
   const threadsUrl = `${tl.getVariable(
     "SYSTEM.TEAMFOUNDATIONCOLLECTIONURI"
@@ -59,7 +61,7 @@ export async function deleteExistingComments(httpsAgent: Agent) {
     "Build.Repository.Name"
   )}/pullRequests/${tl.getVariable(
     "System.PullRequest.PullRequestId"
-  )}/threads?api-version=5.1`;
+  )}/threads?api-version=${apiVersion}`;
   const threadsResponse = await fetch(threadsUrl, {
     headers: {
       Authorization: `Bearer ${tl.getVariable("SYSTEM.ACCESSTOKEN")}`,
@@ -89,7 +91,7 @@ export async function deleteExistingComments(httpsAgent: Agent) {
       "Build.Repository.Name"
     )}/pullRequests/${tl.getVariable(
       "System.PullRequest.PullRequestId"
-    )}/threads/${thread.id}/comments?api-version=5.1`;
+    )}/threads/${thread.id}/comments?api-version=${apiVersion}`;
     const commentsResponse = await fetch(commentsUrl, {
       headers: {
         Authorization: `Bearer ${tl.getVariable("SYSTEM.ACCESSTOKEN")}`,
@@ -110,7 +112,7 @@ export async function deleteExistingComments(httpsAgent: Agent) {
         "Build.Repository.Name"
       )}/pullRequests/${tl.getVariable(
         "System.PullRequest.PullRequestId"
-      )}/threads/${thread.id}/comments/${comment.id}?api-version=5.1`;
+      )}/threads/${thread.id}/comments/${comment.id}?api-version=${apiVersion}`;
 
       await fetch(removeCommentUrl, {
         method: "DELETE",

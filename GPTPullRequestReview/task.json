@@ -6,9 +6,7 @@
   "author": "John Strand",
   "helpMarkDown": "[More Information](https://github.com/johnstrand/azure-pipeline-gpt-pr-review)",
   "category": "Utility",
-  "visibility": [
-    "Build"
-  ],
+  "visibility": ["Build"],
   "demands": [],
   "version": {
     "Major": "0",
@@ -103,6 +101,14 @@
       "defaultValue": "false",
       "required": false,
       "helpMarkDown": "Select this option to enable verbose logging."
+    },
+    {
+      "name": "ado_api_version",
+      "type": "string",
+      "label": "API version (Azure DevOps)",
+      "required": true,
+      "helpMarkDown": "The version of the Azure DevOps API to use.",
+      "defaultValue": "7.1"
     }
   ],
   "execution": {

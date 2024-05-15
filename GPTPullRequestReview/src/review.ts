@@ -106,6 +106,12 @@ As a code reviewer, your task is:
 
       log.verbose(`Request status: ${request.status}`);
 
+      if (!request.ok) {
+        throw new Error(
+          `Failed to get response from ${aoiEndpoint}: ${await request.text()}`
+        );
+      }
+
       if (tl.getBoolInput("stream_data")) {
         const list: string[] = [];
         for await (const chunk of request.body) {
