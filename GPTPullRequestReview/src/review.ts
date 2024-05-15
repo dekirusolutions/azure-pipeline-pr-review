@@ -4,6 +4,17 @@ import { OpenAIApi } from "openai";
 import { addCommentToPR } from "./pr";
 import { Agent } from "https";
 import * as tl from "azure-pipelines-task-lib/task";
+import log from "./log";
+
+type ChatResponse = {
+  model: string;
+  created_at: string;
+  message: {
+    role: string;
+    content: string;
+  };
+  done: boolean;
+};
 
 export async function reviewFile(
   targetBranch: string,
@@ -13,7 +24,7 @@ export async function reviewFile(
   openai: OpenAIApi | undefined,
   aoiEndpoint: string | undefined
 ) {
-  console.log(`Start reviewing ${fileName} ...`);
+  log.info(`Start reviewing ${fileName} ...`);
 
   const defaultOpenAIModel = "gpt-3.5-turbo";
   const patch = await git.diff([targetBranch, "--", fileName]);
@@ -58,17 +69,19 @@ As a code reviewer, your task is:
         headers["api-key"] = apiKey;
       }
 
-      const ten_minutes = 10 * 60 * 1000;
+      const timeoutValue =
+        (parseInt(tl.getInput("timeout") ?? "600") || 600) * 1000;
+
+      log.verbose(`Timeout value: ${timeoutValue}`);
 
       const controller = new AbortController();
 
       setTimeout(() => {
         controller.abort();
-      }, ten_minutes);
+      }, timeoutValue);
 
       const payload = {
-        max_tokens: 500,
-        stream: false,
+        stream: tl.getBoolInput("stream_data"),
         model: tl.getInput("model") || defaultOpenAIModel,
         messages: [
           {
@@ -82,7 +95,7 @@ As a code reviewer, your task is:
         ],
       };
 
-      console.log(`Sending request to ${aoiEndpoint}`, payload);
+      log.verbose(`Sending request to ${aoiEndpoint}`, payload);
 
       const request = await fetch(aoiEndpoint, {
         method: "POST",
@@ -91,27 +104,35 @@ As a code reviewer, your task is:
         body: JSON.stringify(payload),
       });
 
-      const rawResponse = await request.text();
-      console.log(`Request status: ${request.status}`);
-      console.log("Raw response: ", rawResponse);
+      log.verbose(`Request status: ${request.status}`);
 
-      const response = JSON.parse(rawResponse);
+      if (tl.getBoolInput("stream_data")) {
+        const list: string[] = [];
+        for await (const chunk of request.body) {
+          const parsed = JSON.parse(chunk.toString()) as ChatResponse;
+          list.push(parsed.message.content);
+        }
+        review = list.join("");
+      } else {
+        const rawResponse = await request.text();
+        log.verbose("Raw response: ", rawResponse);
 
-      console.log(response);
+        const response = JSON.parse(rawResponse) as ChatResponse;
 
-      review = response.message.content;
+        review = response.message.content;
+      }
     }
 
     if (review) {
       if (review.trim() !== "No feedback.") {
-        console.log(`Feedback for ${fileName}: ${review}`);
+        log.verbose(`Feedback for ${fileName}: ${review}`);
         await addCommentToPR(fileName, review, httpsAgent);
       } else {
-        console.log(`No feedback for ${fileName}.`);
+        log.info(`No feedback for ${fileName}.`);
       }
     }
 
-    console.log(`Review of ${fileName} completed.`);
+    log.info(`Review of ${fileName} completed.`);
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);

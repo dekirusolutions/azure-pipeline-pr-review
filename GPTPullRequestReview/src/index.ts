@@ -5,6 +5,7 @@ import { reviewFile } from "./review";
 import { getTargetBranchName } from "./utils";
 import { getChangedFiles } from "./git";
 import https from "https";
+import log from "./log";
 
 async function run() {
   try {
@@ -26,7 +27,7 @@ async function run() {
 
     if (aoiEndpoint === undefined) {
       if (apiKey === undefined) {
-        tl.setResult(tl.TaskResult.Failed, "No API key provided!");
+        tl.setResult(tl.TaskResult.Failed, "No API key provided!", true);
         return;
       }
 
@@ -44,14 +45,14 @@ async function run() {
     let targetBranch = getTargetBranchName();
 
     if (!targetBranch) {
-      tl.setResult(tl.TaskResult.Failed, "No target branch found!");
+      tl.setResult(tl.TaskResult.Failed, "No target branch found!", true);
       return;
     }
 
     const filesNames = await getChangedFiles(targetBranch);
 
     if (filesNames.length === 0) {
-      tl.setResult(tl.TaskResult.Skipped, "No files to review.");
+      tl.setResult(tl.TaskResult.Skipped, "No files to review.", true);
       return;
     }
 
@@ -68,7 +69,7 @@ async function run() {
       );
     }
 
-    console.log("Pull Request reviewed.");
+    log.info("Pull Request reviewed.");
     tl.setResult(tl.TaskResult.Succeeded, "Pull Request reviewed.", true);
   } catch (err: any) {
     console.error(err.message);

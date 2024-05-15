@@ -1,6 +1,7 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import { Agent } from "https";
 import fetch from "node-fetch";
+import log from "./log";
 
 export async function addCommentToPR(
   fileName: string,
@@ -41,10 +42,10 @@ export async function addCommentToPR(
     agent: httpsAgent,
   });
 
-  console.log("Response: ", response);
-  console.log("Response body: ", await response.text());
+  log.verbose("Response: ", response);
+  log.verbose("Response body: ", await response.text());
 
-  console.log(`New comment added.`);
+  log.info(`New comment added.`);
 }
 
 export async function deleteExistingComments(httpsAgent: Agent) {
@@ -121,7 +122,7 @@ export async function deleteExistingComments(httpsAgent: Agent) {
     }
   }
 
-  console.log("Existing comments deleted.");
+  log.info("Existing comments deleted.");
 }
 
 function getCollectionName(collectionUri: string) {

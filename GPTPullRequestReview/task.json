@@ -6,16 +6,30 @@
   "author": "John Strand",
   "helpMarkDown": "[More Information](https://github.com/johnstrand/azure-pipeline-gpt-pr-review)",
   "category": "Utility",
-  "visibility": ["Build"],
+  "visibility": [
+    "Build"
+  ],
   "demands": [],
   "version": {
     "Major": "0",
     "Minor": "12",
-    "Patch": 13
+    "Patch": 16
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "AIPullRequestReview $(message)",
   "inputs": [
+    {
+      "name": "provider",
+      "type": "pickList",
+      "label": "Provider",
+      "defaultValue": "OpenAI",
+      "required": true,
+      "helpMarkDown": "The provider to use for the AI model.",
+      "options": {
+        "OpenAI": "OpenAI",
+        "Custom": "Custom"
+      }
+    },
     {
       "name": "api_header",
       "type": "string",
@@ -45,7 +59,26 @@
       "label": "OpenAI-compatible endpoint",
       "defaultValue": "",
       "required": false,
-      "helpMarkDown": "OpenAI-compatible endpoint. If not provided, the default endpoint will be used."
+      "helpMarkDown": "OpenAI-compatible endpoint. If not provided, the default endpoint will be used.",
+      "visibleRule": "provider = Custom"
+    },
+    {
+      "name": "stream_data",
+      "type": "boolean",
+      "label": "Stream data",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Select this option to use streaming response",
+      "visibleRule": "provider = Custom"
+    },
+    {
+      "name": "timeout",
+      "type": "int",
+      "label": "Timeout (seconds)",
+      "defaultValue": "600",
+      "required": false,
+      "helpMarkDown": "The timeout for the AI model.",
+      "visibleRule": "provider = Custom"
     },
     {
       "name": "support_self_signed_certificate",
@@ -62,6 +95,14 @@
       "required": false,
       "helpMarkDown": "The message to send to the AI model.",
       "defaultValue": "Act as a code reviewer of a Pull Request, providing feedback on possible bugs and other code issues.\nYou are provided with the Pull Request changes in a patch format.\nEach patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.\n\nAs a code reviewer, your task is:\n- Review only added, edited or deleted lines.\n- If there are no bugs and the changes are correct, write only 'No feedback.'\n- If there are bugs or incorrect code changes, don't write 'No feedback.'"
+    },
+    {
+      "name": "debug_log",
+      "type": "boolean",
+      "label": "Verbose logging",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Select this option to enable verbose logging."
     }
   ],
   "execution": {
