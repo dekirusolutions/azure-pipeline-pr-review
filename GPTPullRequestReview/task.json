@@ -6,12 +6,14 @@
   "author": "Dekiru Solutions",
   "helpMarkDown": "[More Information](https://github.com/dekirusolutions/azure-pipeline-pr-review)",
   "category": "Utility",
-  "visibility": ["Build"],
+  "visibility": [
+    "Build"
+  ],
   "demands": [],
   "version": {
     "Major": "0",
     "Minor": "12",
-    "Patch": 16
+    "Patch": 17
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "AIPullRequestReview $(message)",
@@ -90,9 +92,17 @@
       "name": "instructions",
       "type": "multiLine",
       "label": "Message",
-      "required": false,
+      "required": true,
       "helpMarkDown": "The message to send to the AI model.",
       "defaultValue": "Act as a code reviewer of a Pull Request, providing feedback on possible bugs and other code issues.\nYou are provided with the Pull Request changes in a patch format.\nEach patch entry has the commit message in the Subject line followed by the code changes (diffs) in a unidiff format.\n\nAs a code reviewer, your task is:\n- Review only added, edited or deleted lines.\n- If there are no bugs and the changes are correct, write only 'No feedback.'\n- If there are bugs or incorrect code changes, don't write 'No feedback.'"
+    },
+    {
+      "name": "function_context",
+      "type": "boolean",
+      "label": "Use whole functions as context (--function-context flag)",
+      "defaultValue": false,
+      "required": false,
+      "helpMarkDown": "Select this option to use whole functions as context."
     },
     {
       "name": "debug_log",
