@@ -4,28 +4,18 @@
   "name": "OpenAI Pull Request Review (Fork)",
   "version": "0.0.21",
   "publisher": "DekiruSolutionsAB",
-  "galleryFlags": [
-    "Preview",
-    "Public"
-  ],
+  "galleryFlags": ["Preview", "Public"],
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
   "description": "A task for reviewing Pull Requests using OpenAI-compatible API",
-  "categories": [
-    "Azure Pipelines"
-  ],
+  "categories": ["Azure Pipelines"],
   "icons": {
     "default": "images/icon.png"
   },
-  "tags": [
-    "OpenAI",
-    "GPT",
-    "pullRequest",
-    "review"
-  ],
+  "tags": ["OpenAI", "GPT", "pullRequest", "review"],
   "files": [
     {
       "path": "GPTPullRequestReview"
@@ -33,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "uri": "https://github.com/johnstrand/azure-pipeline-gpt-pr-review"
+    "uri": "https://github.com/dekirusolutions/azure-pipeline-pr-review"
   },
   "content": {
     "details": {
@@ -44,9 +34,7 @@
     {
       "id": "GPTPullRequestReviewv0",
       "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
+      "targets": ["ms.vss-distributed-task.tasks"],
       "properties": {
         "name": "GPTPullRequestReview"
       }
