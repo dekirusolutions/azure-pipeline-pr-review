@@ -1,4 +1,5 @@
 {
+  "$schema": "./task.schema.json",
   "id": "b1caa630-caa6-1eed-b7fc-d1f44a1fe2d2",
   "name": "OpenAIPullRequestReview",
   "friendlyName": "Review PullRequest by OpenAI API",
@@ -6,17 +7,32 @@
   "author": "Dekiru Solutions",
   "helpMarkDown": "[More Information](https://github.com/dekirusolutions/azure-pipeline-pr-review)",
   "category": "Utility",
-  "visibility": [
-    "Build"
-  ],
+  "visibility": ["Build"],
   "demands": [],
   "version": {
-    "Major": "0",
-    "Minor": "12",
-    "Patch": 17
+    "Major": 0,
+    "Minor": 12,
+    "Patch": 18
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "AIPullRequestReview $(message)",
+  "groups": [
+    {
+      "name": "openai",
+      "displayName": "OpenAI settings",
+      "visibleRule": "provider = OpenAI"
+    },
+    {
+      "name": "customai",
+      "displayName": "Custom AI settings",
+      "visibleRule": "provider = Custom"
+    },
+    {
+      "name": "git",
+      "displayName": "Git settings",
+      "isExpanded": false
+    }
+  ],
   "inputs": [
     {
       "name": "provider",
@@ -31,12 +47,35 @@
       }
     },
     {
+      "name": "openaiApiKey",
+      "type": "string",
+      "label": "OpenAI API key",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "API key for OpenAI",
+      "groupName": "openai"
+    },
+    {
+      "name": "openaiModel",
+      "type": "pickList",
+      "label": "OpenAI model",
+      "required": false,
+      "options": {
+        "": "",
+        "gpt-4": "GPT 4",
+        "gpt-3.5-turbo": "GPT 3.5 Turbo",
+        "gpt-3.5-turbo-16k": "GPT 3.5 Turbo 16k"
+      },
+      "helpMarkDown": "The OpenAI model to use. not used if you use Azure OpenAI. if no model is selected, the GPT 3.5 Turbo model is used."
+    },
+    {
       "name": "api_header",
       "type": "string",
       "label": "API key header",
       "defaultValue": "",
       "required": false,
-      "helpMarkDown": "Header for the API key"
+      "helpMarkDown": "Header for the API key",
+      "groupName": "customai"
     },
     {
       "name": "api_key",
@@ -44,14 +83,16 @@
       "label": "API key",
       "defaultValue": "",
       "required": false,
-      "helpMarkDown": "API key for OpenAI or Azure OpenAI."
+      "helpMarkDown": "API key for custom AI provider",
+      "groupName": "customai"
     },
     {
       "name": "model",
       "type": "string",
       "label": "AI model",
       "required": true,
-      "helpMarkDown": "The model to use."
+      "helpMarkDown": "The model to use.",
+      "groupName": "customai"
     },
     {
       "name": "aoi_endpoint",
@@ -60,7 +101,8 @@
       "defaultValue": "",
       "required": false,
       "helpMarkDown": "OpenAI-compatible endpoint. If not provided, the default endpoint will be used.",
-      "visibleRule": "provider = Custom"
+      "visibleRule": "provider = Custom",
+      "groupName": "customai"
     },
     {
       "name": "stream_data",
@@ -69,7 +111,8 @@
       "defaultValue": "false",
       "required": false,
       "helpMarkDown": "Select this option to use streaming response",
-      "visibleRule": "provider = Custom"
+      "visibleRule": "provider = Custom",
+      "groupName": "customai"
     },
     {
       "name": "timeout",
@@ -78,7 +121,8 @@
       "defaultValue": "600",
       "required": false,
       "helpMarkDown": "The timeout for the AI model.",
-      "visibleRule": "provider = Custom"
+      "visibleRule": "provider = Custom",
+      "groupName": "customai"
     },
     {
       "name": "support_self_signed_certificate",
@@ -102,15 +146,17 @@
       "label": "Use whole functions as context (--function-context flag)",
       "defaultValue": false,
       "required": false,
-      "helpMarkDown": "Select this option to use whole functions as context."
+      "helpMarkDown": "Select this option to use whole functions as context. Disables the context_size option.",
+      "groupName": "git"
     },
     {
-      "name": "debug_log",
-      "type": "boolean",
-      "label": "Verbose logging",
-      "defaultValue": "false",
-      "required": false,
-      "helpMarkDown": "Select this option to enable verbose logging."
+      "name": "context_size",
+      "type": "int",
+      "label": "Context size (diff)",
+      "defaultValue": "3",
+      "required": true,
+      "helpMarkDown": "The size of the diff context to provide to the AI model.",
+      "groupName": "git"
     },
     {
       "name": "ado_api_version",
@@ -119,6 +165,14 @@
       "required": true,
       "helpMarkDown": "The version of the Azure DevOps API to use.",
       "defaultValue": "7.1"
+    },
+    {
+      "name": "debug_log",
+      "type": "boolean",
+      "label": "Verbose logging",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Select this option to enable verbose logging."
     }
   ],
   "execution": {

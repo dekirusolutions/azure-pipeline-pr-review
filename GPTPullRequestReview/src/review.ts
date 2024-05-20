@@ -26,10 +26,12 @@ export async function reviewFile(
 ) {
   log.info(`Start reviewing ${fileName} ...`);
 
-  const defaultOpenAIModel = "gpt-3.5-turbo";
   const params = [targetBranch];
   if (tl.getBoolInput("function_context")) {
     params.push("--function-context");
+  } else {
+    const contextLines = tl.getInputRequired("context_size");
+    params.push(`-U${contextLines}`);
   }
   params.push("--", fileName);
   const patch = await git.diff([targetBranch, "--", fileName]);
@@ -40,7 +42,7 @@ export async function reviewFile(
 
     if (openai) {
       const response = await openai.createChatCompletion({
-        model: tl.getInput("model") || defaultOpenAIModel,
+        model: tl.getInput("openaiModel") || "gpt-3.5-turbo",
         messages: [
           {
             role: "system",
@@ -56,12 +58,13 @@ export async function reviewFile(
 
       review = response.data.choices[0]?.message?.content ?? "No feedback.";
     } else if (aoiEndpoint) {
+      const apiHeaderName = tl.getInput("api_header") || "api-key";
       const headers = {
         "Content-Type": "application/json",
       } as { [key: string]: string };
 
       if (apiKey) {
-        headers["api-key"] = apiKey;
+        headers[apiHeaderName] = apiKey;
       }
 
       const timeoutValue =
@@ -77,7 +80,7 @@ export async function reviewFile(
 
       const payload = {
         stream: tl.getBoolInput("stream_data"),
-        model: tl.getInput("model") || defaultOpenAIModel,
+        model: tl.getInputRequired("model"),
         messages: [
           {
             role: "system",

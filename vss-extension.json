@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "AIPullRequestReview",
   "name": "OpenAI Pull Request Review (Fork)",
-  "version": "0.0.22",
+  "version": "0.0.24",
   "publisher": "DekiruSolutionsAB",
   "galleryFlags": [
     "Preview",

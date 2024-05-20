@@ -17,15 +17,20 @@ async function run() {
       return;
     }
 
+    const useOpenAi = tl.getInputRequired("provider") === "OpenAI";
+
     let openai: OpenAIApi | undefined;
     const supportSelfSignedCertificate = tl.getBoolInput(
       "support_self_signed_certificate"
     );
 
-    const apiKey = tl.getInput("api_key");
+    const apiKey = useOpenAi
+      ? tl.getInput("openaiApiKey")
+      : tl.getInput("api_key");
+
     const aoiEndpoint = tl.getInput("aoi_endpoint");
 
-    if (aoiEndpoint === undefined) {
+    if (useOpenAi) {
       if (apiKey === undefined) {
         tl.setResult(tl.TaskResult.Failed, "No API key provided!", true);
         return;
